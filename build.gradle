@@ -28,8 +28,23 @@ repositories {
 }
 
 dependencies {
-    
+    // lombok annotation processing  (added those subconsciously but is lombok needed in such simple project at all???)
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    integrationCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    integrationAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    // testing (junit 5 + assertj)
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testImplementation "org.assertj:assertj-core:${assertjVersion}"
+
+    // cli
+    implementation "info.picocli:picocli:${picocliVersion}"
 }
+
+defaultTasks 'assembleDist'
 
 wrapper {
     gradleVersion = gradleWrapperVersion
@@ -42,4 +57,8 @@ tasks.withType(Test) {
 
 jar {
     archiveBaseName = project.name
+}
+
+application {
+    mainClass = 'com.dburyak.exercise.game.bowling.CliApp'
 }

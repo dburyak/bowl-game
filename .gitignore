@@ -25,3 +25,8 @@ hs_err_pid*
 # gradle
 /build
 /.gradle
+
+# ide
+/.idea
+*.iml
+*.ipr
