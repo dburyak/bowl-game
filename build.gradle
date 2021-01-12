@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.palantir.git-version'
+    id 'com.coditory.integration-test'
+}
+
+ext {
+    gradleWrapperVersion = ext.gradleVersion
+}
+
+group = 'com.dburyak.exercise'
+version gitVersion()
+description = 'Bowl game results printer CLI app (Java exercise)'
+version gitVersion()
+ext { isRelease = versionDetails().isCleanTag }
+if (!isRelease) { 
+    project.version += '-SNAPSHOT'
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    
+}
+
+wrapper {
+    gradleVersion = gradleWrapperVersion
+    distributionType = 'ALL'
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
+jar {
+    archiveBaseName = project.name
+}

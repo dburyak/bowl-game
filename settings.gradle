@@ -1,0 +1,8 @@
+pluginManagement {
+    plugins {
+        id 'com.palantir.git-version' version gitVersionGradlePluginVersion
+        id 'com.coditory.integration-test' version integTestGradlePluginVersion
+    }
+}
+
+rootProject.name = 'bowl-game'
