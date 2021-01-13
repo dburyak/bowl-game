@@ -1,3 +1,5 @@
+import java.time.Instant
+
 plugins {
     id 'java'
     id 'application'
@@ -7,6 +9,7 @@ plugins {
 
 ext {
     gradleWrapperVersion = ext.gradleVersion
+    generatedResourcesDir = file("${buildDir}/generated-resources")
 }
 
 group = 'com.dburyak.exercise'
@@ -25,6 +28,10 @@ repositories {
     mavenLocal()
     jcenter()
     mavenCentral()
+}
+
+sourceSets.each {
+    it.resources.srcDirs generatedResourcesDir
 }
 
 dependencies {
@@ -60,5 +67,24 @@ jar {
 }
 
 application {
-    mainClass = 'com.dburyak.exercise.game.bowling.CliApp'
+    mainClass = 'com.dburyak.exercise.game.bowling.BowlingCliApp'
+}
+
+task generateVersionInfo() {
+    def projectVersion = project.version
+    def gitRevision = versionDetails().gitHashFull
+    def outFiles = fileTree(generatedResourcesDir)
+    inputs.property('version', projectVersion)
+    inputs.property('revision', gitRevision)
+    outputs.files(outFiles)
+    doLast {
+        generatedResourcesDir.mkdirs()
+        file("${generatedResourcesDir}/version.txt").text = projectVersion
+        file("${generatedResourcesDir}/revision.txt").text = gitRevision
+        file("${generatedResourcesDir}/built_at.txt").text = Instant.now() as String
+    }
+}
+
+tasks.withType(ProcessResources) {
+    dependsOn generateVersionInfo
 }
