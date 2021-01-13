@@ -1,13 +1,8 @@
 package com.dburyak.exercise.game.bowling.io;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Indicates that input has wrong format and can't be parsed.
  */
-@Setter
-@Getter
 public class FormatException extends RuntimeException {
     public FormatException() {
         super();

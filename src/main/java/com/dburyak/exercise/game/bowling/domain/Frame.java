@@ -67,10 +67,6 @@ public class Frame implements Iterable<Roll> {
                 .sum();
     }
 
-    public boolean isLastFrame() {
-        return number == 10;
-    }
-
     public Frame addRoll(Roll roll) {
         rolls.add(roll);
         return this;

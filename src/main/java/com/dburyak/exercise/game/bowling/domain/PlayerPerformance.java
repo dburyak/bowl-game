@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * All the frames/deliveries performed by a single player during a match.
@@ -20,5 +21,11 @@ public class PlayerPerformance implements Iterable<Frame> {
     @Override
     public Iterator<Frame> iterator() {
         return frames.iterator();
+    }
+
+    public List<Roll> getAllRolls() {
+        return frames.stream()
+                .flatMap(f -> f.getRolls().stream())
+                .collect(Collectors.toList());
     }
 }

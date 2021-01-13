@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * Default input format - tab separated text, ten pin rules.
  */
-public class MatchHistoryParserDefaultImpl implements MatchHistoryParser {
+public class TenPinTabSeparatedParserImpl implements MatchHistoryParser {
     private static final String SEPARATOR = "\t";
 
     @Override
@@ -89,6 +89,7 @@ public class MatchHistoryParserDefaultImpl implements MatchHistoryParser {
             var rollsInFrame = addRollsToFrame(frame, allPlayerRolls, rollPos);
             rollPos += rollsInFrame;
             frames.add(frame);
+            frameNumber++;
         }
         return frames;
     }
