@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder(toBuilder = true)
-public class Delivery {
+public class Roll {
     private int knockedPins;
     private Type type;
 

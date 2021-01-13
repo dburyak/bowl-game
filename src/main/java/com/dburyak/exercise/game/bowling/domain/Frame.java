@@ -1,17 +1,22 @@
 package com.dburyak.exercise.game.bowling.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Iterator;
 import java.util.List;
 
 @Data
 @Builder(toBuilder = true)
-public class Frame implements Iterable<Delivery> {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Frame implements Iterable<Roll> {
     private Type type;
-    private List<Delivery> deliveries;
+    private List<Roll> rolls;
     private int score;
+    private int number;
 
     public enum Type {
         OPEN,
@@ -20,28 +25,28 @@ public class Frame implements Iterable<Delivery> {
     }
 
     @Override
-    public Iterator<Delivery> iterator() {
-        return deliveries.iterator();
+    public Iterator<Roll> iterator() {
+        return rolls.iterator();
     }
 
     public boolean hasSecondDelivery() {
-        return deliveries.size() > 1;
+        return rolls.size() > 1;
     }
 
     public boolean hasThirdDelivery() {
-        return deliveries.size() > 2;
+        return rolls.size() > 2;
     }
 
-    public Delivery getFirstDelivery() {
-        return deliveries.get(0);
+    public Roll getFirstRoll() {
+        return rolls.get(0);
     }
 
-    public Delivery getSecondDelivery() {
-        return hasSecondDelivery() ? deliveries.get(1) : null;
+    public Roll getSecondRoll() {
+        return hasSecondDelivery() ? rolls.get(1) : null;
     }
 
-    public Delivery getThirdDelivery() {
-        return hasThirdDelivery() ? deliveries.get(2) : null;
+    public Roll getThirdRoll() {
+        return hasThirdDelivery() ? rolls.get(2) : null;
     }
 
     public boolean isOpenFrame() {
@@ -54,5 +59,24 @@ public class Frame implements Iterable<Delivery> {
 
     public boolean isStrike() {
         return type == Type.STRIKE;
+    }
+
+    public int getTotalKnockedPins() {
+        return rolls.stream()
+                .mapToInt(Roll::getKnockedPins)
+                .sum();
+    }
+
+    public boolean isLastFrame() {
+        return number == 10;
+    }
+
+    public Frame addRoll(Roll roll) {
+        rolls.add(roll);
+        return this;
+    }
+
+    public int getRollsNumber() {
+        return rolls.size();
     }
 }

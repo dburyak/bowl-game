@@ -1,6 +1,9 @@
 package com.dburyak.exercise.game.bowling.io;
 
+import com.dburyak.exercise.game.bowling.config.Config;
+
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 
 /**
@@ -17,16 +20,26 @@ import java.io.Reader;
 public interface MatchHistoryInput {
 
     /**
-     * Read data from source in text.
-     *
-     * @return reader
-     */
-    Reader asInputReader();
-
-    /**
-     * Read data from source in binary.
+     * Read data from source as binary.
      *
      * @return input stream
      */
     InputStream asInputStream();
+
+    /**
+     * Read data from source as text.
+     *
+     * @return reader
+     */
+    default Reader asInputReader() {
+        return new InputStreamReader(asInputStream());
+    }
+
+    static MatchHistoryInput create(Config config) {
+        if (config.getInputSource() == Config.InputSource.STDIN) {
+            return new StdinMatchHistoryInputImpl();
+        } else {
+            throw new IllegalArgumentException("input source is not supported : " + config.getInputSource());
+        }
+    }
 }
