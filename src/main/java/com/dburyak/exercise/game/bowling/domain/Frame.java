@@ -29,11 +29,11 @@ public class Frame implements Iterable<Roll> {
         return rolls.iterator();
     }
 
-    public boolean hasSecondDelivery() {
+    public boolean hasSecondRoll() {
         return rolls.size() > 1;
     }
 
-    public boolean hasThirdDelivery() {
+    public boolean hasThirdRoll() {
         return rolls.size() > 2;
     }
 
@@ -42,11 +42,11 @@ public class Frame implements Iterable<Roll> {
     }
 
     public Roll getSecondRoll() {
-        return hasSecondDelivery() ? rolls.get(1) : null;
+        return hasSecondRoll() ? rolls.get(1) : null;
     }
 
     public Roll getThirdRoll() {
-        return hasThirdDelivery() ? rolls.get(2) : null;
+        return hasThirdRoll() ? rolls.get(2) : null;
     }
 
     public boolean isOpenFrame() {

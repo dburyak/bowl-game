@@ -28,7 +28,7 @@ public class Config {
     public enum InputFormat {
 
         /**
-         * Default format specified in requirements.
+         * Default format: text, tab separated.
          */
         TEXT_TAB_SEPARATED
     }
@@ -41,7 +41,7 @@ public class Config {
     public enum OutputFormat {
 
         /**
-         * Default format specified in requirements.
+         * Default format: text, tab separated.
          */
         TEXT_TAB_SEPARATED
     }

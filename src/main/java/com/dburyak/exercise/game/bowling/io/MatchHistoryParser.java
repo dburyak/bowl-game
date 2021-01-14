@@ -14,7 +14,7 @@ public interface MatchHistoryParser {
         var isTabSeparated = config.getInputFormat() == Config.InputFormat.TEXT_TAB_SEPARATED;
         var isTenPin = config.getRules() == Config.Rules.TEN_PIN;
         if (isTabSeparated && isTenPin) {
-            return  new TenPinTabSeparatedParserImpl();
+            return  new TenPinTabSeparatedParser();
         } else {
             throw new IllegalArgumentException("input format not supported : "
                     + config.getInputFormat() + ", " + config.getRules());

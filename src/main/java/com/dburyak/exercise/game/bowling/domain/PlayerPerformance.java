@@ -28,4 +28,9 @@ public class PlayerPerformance implements Iterable<Frame> {
                 .flatMap(f -> f.getRolls().stream())
                 .collect(Collectors.toList());
     }
+
+    public PlayerPerformance addFrame(Frame frame) {
+        frames.add(frame);
+        return this;
+    }
 }

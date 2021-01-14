@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,37 +16,40 @@ import java.util.stream.Collectors;
 /**
  * Default input format - tab separated text, ten pin rules.
  */
-public class TenPinTabSeparatedParserImpl implements MatchHistoryParser {
+public class TenPinTabSeparatedParser implements MatchHistoryParser {
     private static final String SEPARATOR = "\t";
 
     @Override
     public Match parse(MatchHistoryInput input) {
-        var inputReader = new BufferedReader(input.asInputReader());
-        var performances = inputReader.lines()
-                .map(line -> {
-                    var items = line.split(SEPARATOR);
-                    if (items.length != 2) {
-                        throw new FormatException("malformed input entry: " + line);
-                    }
-                    return new Entry(items[0], items[1]);
-                })
-                .collect(Collectors.groupingBy(Entry::getPlayerName))
-                .entrySet().stream()
-                .map(playerRollEntries -> {
-                    var playerName = playerRollEntries.getKey();
-                    var rolls = playerRollEntries.getValue().stream()
-                            .map(this::toRoll)
-                            .collect(Collectors.toList());
-                    var frames = toFrames(rolls);
-                    return PlayerPerformance.builder()
-                            .playerName(playerName)
-                            .frames(frames)
-                            .build();
-                })
-                .collect(Collectors.toList());
-        return Match.builder()
-                .players(performances)
-                .build();
+        try (var inputReader = new BufferedReader(input.asInputReader())) {
+            var performances = inputReader.lines()
+                    .map(line -> {
+                        var items = line.split(SEPARATOR);
+                        if (items.length != 2) {
+                            throw new FormatException("malformed input entry: " + line);
+                        }
+                        return new Entry(items[0], items[1]);
+                    })
+                    .collect(Collectors.groupingBy(Entry::getPlayerName))
+                    .entrySet().stream()
+                    .map(playerRollEntries -> {
+                        var playerName = playerRollEntries.getKey();
+                        var rolls = playerRollEntries.getValue().stream()
+                                .map(this::toRoll)
+                                .collect(Collectors.toList());
+                        var frames = toFrames(rolls);
+                        return PlayerPerformance.builder()
+                                .playerName(playerName)
+                                .frames(frames)
+                                .build();
+                    })
+                    .collect(Collectors.toList());
+            return Match.builder()
+                    .players(performances)
+                    .build();
+        } catch (IOException e) {
+            throw new RuntimeException("failed to read data from input", e);
+        }
     }
 
     @Data
@@ -102,11 +106,13 @@ public class TenPinTabSeparatedParserImpl implements MatchHistoryParser {
             // mid-game frame may have either 1 or 2 rolls
             if (firstRoll.getKnockedPins() == 10) { // strike, single roll in frame
                 frame.setType(Frame.Type.STRIKE);
-            } else { // spare or open frame, 2 rolls in frame
+            } else { // spare, open frame or foul+strike - 2 rolls in frame
                 var secondRoll = rolls.get(offset + 1);
                 frame.addRoll(secondRoll);
                 var pinsKnockedInTwoRolls = firstRoll.getKnockedPins() + secondRoll.getKnockedPins();
-                frame.setType(pinsKnockedInTwoRolls == 10 ? Frame.Type.SPARE : Frame.Type.OPEN);
+                frame.setType((firstRoll.isFoul() && pinsKnockedInTwoRolls == 10) ? Frame.Type.STRIKE
+                        : (pinsKnockedInTwoRolls == 10) ? Frame.Type.SPARE
+                        : Frame.Type.OPEN);
             }
         } else { // this is final frame, it requires special handling
             // final frame always has at least 2 rolls

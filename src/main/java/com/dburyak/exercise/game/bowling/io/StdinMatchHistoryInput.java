@@ -5,7 +5,7 @@ import java.io.InputStream;
 /**
  * Implementation that reads data from STDIN.
  */
-public class StdinMatchHistoryInputImpl implements MatchHistoryInput {
+public class StdinMatchHistoryInput implements MatchHistoryInput {
 
     @Override
     public InputStream asInputStream() {

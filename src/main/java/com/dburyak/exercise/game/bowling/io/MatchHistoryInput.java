@@ -37,7 +37,7 @@ public interface MatchHistoryInput {
 
     static MatchHistoryInput create(Config config) {
         if (config.getInputSource() == Config.InputSource.STDIN) {
-            return new StdinMatchHistoryInputImpl();
+            return new StdinMatchHistoryInput();
         } else {
             throw new IllegalArgumentException("input source is not supported : " + config.getInputSource());
         }
