@@ -10,7 +10,9 @@ import lombok.Data;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -23,14 +25,18 @@ public class TenPinTabSeparatedParser implements MatchHistoryParser {
     public Match parse(MatchHistoryInput input) {
         try (var inputReader = new BufferedReader(input.asInputReader())) {
             var performances = inputReader.lines()
+                    .filter(Objects::nonNull)
+                    .map(String::strip)
+                    .filter(str -> !str.isBlank())
                     .map(line -> {
                         var items = line.split(SEPARATOR);
                         if (items.length != 2) {
                             throw new FormatException("malformed input entry: " + line);
                         }
-                        return new Entry(items[0], items[1]);
+                        return new InputEntry(items[0], items[1]);
                     })
-                    .collect(Collectors.groupingBy(Entry::getPlayerName))
+                    // grouping using linked hash map because we need to preserve order
+                    .collect(Collectors.groupingBy(InputEntry::getPlayerName, LinkedHashMap::new, Collectors.toList()))
                     .entrySet().stream()
                     .map(playerRollEntries -> {
                         var playerName = playerRollEntries.getKey();
@@ -49,17 +55,19 @@ public class TenPinTabSeparatedParser implements MatchHistoryParser {
                     .build();
         } catch (IOException e) {
             throw new RuntimeException("failed to read data from input", e);
+        } catch (IndexOutOfBoundsException e) {
+            throw new FormatException("input has too few rolls", e);
         }
     }
 
     @Data
     @Builder(toBuilder = true)
-    private static class Entry {
+    private static class InputEntry {
         private String playerName;
         private String rollResult;
     }
 
-    public Roll toRoll(Entry e) {
+    public Roll toRoll(InputEntry e) {
         var knockedPins = 0;
         var type = Roll.Type.HIT;
         if (e.rollResult.equalsIgnoreCase("f")) {
@@ -94,6 +102,9 @@ public class TenPinTabSeparatedParser implements MatchHistoryParser {
             rollPos += rollsInFrame;
             frames.add(frame);
             frameNumber++;
+        }
+        if (rollPos < allPlayerRolls.size()) {
+            throw new FormatException("too many rolls: expected=" + rollPos + ", actual=" + allPlayerRolls.size());
         }
         return frames;
     }

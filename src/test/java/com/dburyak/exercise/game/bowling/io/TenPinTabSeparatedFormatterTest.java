@@ -70,7 +70,7 @@ public class TenPinTabSeparatedFormatterTest {
     @Test
     void format_FormatsCorrectly_WhenSampleMatch1() {
         // given: sample1 match
-        var match = matchHelper.buildMatchSample1();
+        var match = matchHelper.buildMatchSample1("Jeff", "John");
 
         // when: format match
         formatter.format(match, scoreOut);
