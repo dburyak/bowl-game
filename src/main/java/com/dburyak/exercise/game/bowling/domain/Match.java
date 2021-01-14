@@ -15,4 +15,10 @@ public class Match implements Iterable<PlayerPerformance> {
     public Iterator<PlayerPerformance> iterator() {
         return players.iterator();
     }
+
+    public PlayerPerformance getPlayerPerformance(String player) {
+        return players.stream()
+                .filter(p -> p.getPlayerName().equals(player))
+                .findFirst().orElseThrow();
+    }
 }
