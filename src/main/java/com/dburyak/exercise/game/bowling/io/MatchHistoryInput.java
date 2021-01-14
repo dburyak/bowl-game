@@ -2,6 +2,7 @@ package com.dburyak.exercise.game.bowling.io;
 
 import com.dburyak.exercise.game.bowling.config.Config;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -38,6 +39,8 @@ public interface MatchHistoryInput {
     static MatchHistoryInput create(Config config) {
         if (config.getInputSource() == Config.InputSource.STDIN) {
             return new StdinMatchHistoryInput();
+        } else if (config.getInputSource() == Config.InputSource.FILE) {
+            return new FileMatchHistoryInput(new File(config.getInput()));
         } else {
             throw new IllegalArgumentException("input source is not supported : " + config.getInputSource());
         }
