@@ -1,14 +1,17 @@
-package com.dburyak.exercise.game.bowling.io;
+package com.dburyak.exercise.game.bowling.service.format;
 
 import com.dburyak.exercise.game.bowling.domain.Frame;
-import com.dburyak.exercise.game.bowling.domain.Match;
+import com.dburyak.exercise.game.bowling.domain.Game;
 import com.dburyak.exercise.game.bowling.domain.PlayerPerformance;
 import com.dburyak.exercise.game.bowling.domain.Roll;
+import com.dburyak.exercise.game.bowling.service.io.GameHistoryInput;
+import com.dburyak.exercise.game.bowling.util.FormatException;
 import lombok.Builder;
 import lombok.Data;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,11 +21,11 @@ import java.util.stream.Collectors;
 /**
  * Default input format - tab separated text, ten pin rules.
  */
-public class TenPinTabSeparatedParser implements MatchHistoryParser {
+public class TenPinTabSeparatedParser implements GameParser {
     private static final String SEPARATOR = "\\s+";
 
     @Override
-    public Match parse(MatchHistoryInput input) {
+    public Game parse(GameHistoryInput input) {
         try (var inputReader = new BufferedReader(input.asInputReader())) {
             var performances = inputReader.lines()
                     .filter(Objects::nonNull)
@@ -33,6 +36,7 @@ public class TenPinTabSeparatedParser implements MatchHistoryParser {
                         if (items.length != 2) {
                             throw new FormatException("malformed input entry: " + line);
                         }
+                        // TODO: validate input entry here, not in .toRoll(e) (check in [0..10] && in ["f"])
                         return new InputEntry(items[0], items[1]);
                     })
                     // grouping using linked hash map because we need to preserve order
@@ -50,11 +54,11 @@ public class TenPinTabSeparatedParser implements MatchHistoryParser {
                                 .build();
                     })
                     .collect(Collectors.toList());
-            return Match.builder()
+            return Game.builder()
                     .players(performances)
                     .build();
         } catch (IOException e) {
-            throw new RuntimeException("failed to read data from input", e);
+            throw new UncheckedIOException("failed to read data from input", e);
         } catch (IndexOutOfBoundsException e) {
             throw new FormatException("input has too few rolls", e);
         }

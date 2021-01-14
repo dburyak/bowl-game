@@ -4,23 +4,18 @@ import com.dburyak.exercise.game.bowling.config.CliArgsConfigRetriever;
 import com.dburyak.exercise.game.bowling.config.Config;
 import com.dburyak.exercise.game.bowling.config.ConfigRetriever;
 import com.dburyak.exercise.game.bowling.config.DefaultConfigRetriever;
-import com.dburyak.exercise.game.bowling.io.MatchHistoryInput;
-import com.dburyak.exercise.game.bowling.io.MatchHistoryParser;
-import com.dburyak.exercise.game.bowling.io.ScoreFormatter;
-import com.dburyak.exercise.game.bowling.io.ScoreOutput;
-import com.dburyak.exercise.game.bowling.logic.ScoreCalculator;
+import com.dburyak.exercise.game.bowling.service.io.GameHistoryInput;
+import com.dburyak.exercise.game.bowling.service.format.GameParser;
+import com.dburyak.exercise.game.bowling.service.format.GameOutputFormatter;
+import com.dburyak.exercise.game.bowling.service.io.GameOutput;
+import com.dburyak.exercise.game.bowling.service.rules.ScoreCalculationStrategy;
 import com.dburyak.exercise.game.bowling.util.ConfigUtil;
 import lombok.Getter;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.IVersionProvider;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -29,7 +24,7 @@ import java.util.stream.Collectors;
         name = "bowl-game",
         description = "Calculates bowling game scores",
         mixinStandardHelpOptions = true,
-        versionProvider = BowlingCliApp.VersionProvider.class
+        versionProvider = AppVersionProvider.class
 )
 @Getter
 public class BowlingCliApp implements Callable<Integer> {
@@ -75,56 +70,22 @@ public class BowlingCliApp implements Callable<Integer> {
                 .collect(Collectors.toList()));
 
         // initialization
-        var input = MatchHistoryInput.create(config);
-        var parser = MatchHistoryParser.create(config);
-        var scoreCalculator = ScoreCalculator.create(config);
-        var outputFormatter = ScoreFormatter.create(config);
-        var output = ScoreOutput.create(config);
+        var input = GameHistoryInput.create(config);
+        var parser = GameParser.create(config);
+        var scoreCalculator = ScoreCalculationStrategy.create(config);
+        var outputFormatter = GameOutputFormatter.create(config);
+        var output = GameOutput.create(config);
 
-        var match = parser.parse(input);
-        scoreCalculator.calculateScores(match);
-        outputFormatter.format(match, output);
+        // main logic
+        var game = parser.parse(input);
+        scoreCalculator.calculateScores(game);
+        outputFormatter.format(game, output);
+
         return 0;
     }
 
     public static void main(String[] args) {
         var exitCode = new CommandLine(new BowlingCliApp()).execute(args);
         System.exit(exitCode);
-    }
-
-    static class VersionProvider implements IVersionProvider {
-        private static final String versionFileName = "/version.txt";
-        private static final String revisionFileName = "/revision.txt";
-        private static final String buildTimeFileName = "/built_at.txt";
-
-        @Override
-        public String[] getVersion() throws Exception {
-            // using linked hash map to preserve the order
-            var versionInfoEntries = new LinkedHashMap<String, String>();
-            versionInfoEntries.put("version  : ", versionFileName);
-            versionInfoEntries.put("revision : ", revisionFileName);
-            versionInfoEntries.put("built_at : ", buildTimeFileName);
-            return versionInfoEntries.entrySet().stream()
-                    .map(e -> {
-                        String versionLabel = e.getKey();
-                        String fileName = e.getValue();
-                        String versionValue = readSingleLine(fileName);
-                        return versionLabel + versionValue;
-                    })
-                    .toArray(String[]::new);
-        }
-
-        private String readSingleLine(String fileName) {
-            var line = "unknown";
-            try (
-                    var inStream = getClass().getResourceAsStream(fileName);
-                    var reader = new BufferedReader(new InputStreamReader(inStream));
-            ) {
-                line = reader.readLine();
-            } catch (IOException ioException) {
-                // we really don't care here, just default to "unknown"
-            }
-            return line;
-        }
     }
 }

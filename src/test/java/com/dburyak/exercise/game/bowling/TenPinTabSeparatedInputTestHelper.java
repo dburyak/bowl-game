@@ -45,7 +45,7 @@ public class TenPinTabSeparatedInputTestHelper {
         });
     }
 
-    public String buildInputSample1Match(String player1, String player2) {
+    public String buildInputForJeffVsJohnScenarioGame(String player1, String player2) {
         return withStringWriter(out -> {
             out.printf("%s\t%s\n", player1, 10);        // 1
             out.printf("%s\t%s\n", player2, 3);         // 2

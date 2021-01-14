@@ -2,6 +2,8 @@
 Bowl game results printer CLI app (Java exercise)
 
 # build
+Requires **java 11** or higher.
+
 To install distribution locally into `./build/install` dir:
 ```shell
 ./gradlew install
@@ -21,7 +23,7 @@ To build zip and/or tar distribution(s) in `./build/distributions` dir:
 # test
 To run all tests:
 ```shell
-./gradlew testAll
+./gradlew check
 ```
 To run unit or integration tests only:
 ```shell

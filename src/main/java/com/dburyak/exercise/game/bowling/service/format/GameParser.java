@@ -1,16 +1,17 @@
-package com.dburyak.exercise.game.bowling.io;
+package com.dburyak.exercise.game.bowling.service.format;
 
 import com.dburyak.exercise.game.bowling.config.Config;
-import com.dburyak.exercise.game.bowling.domain.Match;
+import com.dburyak.exercise.game.bowling.domain.Game;
+import com.dburyak.exercise.game.bowling.service.io.GameHistoryInput;
 
 /**
- * Parser of match input log.
- * We may have multiple implementations to support different input formats (csv, binary for example).
+ * Parser of game input.
+ * We may have multiple implementations to support different input formats (csv, json, binary for example).
  */
-public interface MatchHistoryParser {
-    Match parse(MatchHistoryInput input);
+public interface GameParser {
+    Game parse(GameHistoryInput input);
 
-    static MatchHistoryParser create(Config config) {
+    static GameParser create(Config config) {
         var isTabSeparated = config.getInputFormat() == Config.InputFormat.TEXT_TAB_SEPARATED;
         var isTenPin = config.getRules() == Config.Rules.TEN_PIN;
         if (isTabSeparated && isTenPin) {

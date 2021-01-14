@@ -1,4 +1,4 @@
-package com.dburyak.exercise.game.bowling.io;
+package com.dburyak.exercise.game.bowling.service.io;
 
 import com.dburyak.exercise.game.bowling.config.Config;
 
@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 /**
- * Match input log reader.
+ * Game input reader.
  * Encapsulates all the details where to read input from and how to convert it to a chars or bytes stream.
  * <p>
  * Possible implementations:
@@ -18,7 +18,7 @@ import java.io.Reader;
  *   <li>read input from url
  *  </ul>
  */
-public interface MatchHistoryInput {
+public interface GameHistoryInput {
 
     /**
      * Read data from source as binary.
@@ -36,11 +36,11 @@ public interface MatchHistoryInput {
         return new InputStreamReader(asInputStream());
     }
 
-    static MatchHistoryInput create(Config config) {
+    static GameHistoryInput create(Config config) {
         if (config.getInputSource() == Config.InputSource.STDIN) {
-            return new StdinMatchHistoryInput();
+            return new StdinGameHistoryInput();
         } else if (config.getInputSource() == Config.InputSource.FILE) {
-            return new FileMatchHistoryInput(new File(config.getInput()));
+            return new FileGameHistoryInput(new File(config.getInput()));
         } else {
             throw new IllegalArgumentException("input source is not supported : " + config.getInputSource());
         }

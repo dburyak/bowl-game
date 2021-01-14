@@ -1,12 +1,12 @@
-package com.dburyak.exercise.game.bowling.logic;
+package com.dburyak.exercise.game.bowling.service.rules;
 
-import com.dburyak.exercise.game.bowling.domain.Match;
+import com.dburyak.exercise.game.bowling.domain.Game;
 
-public class TenPinScoreCalculator implements ScoreCalculator {
+public class TenPinScoreCalculationStrategy implements ScoreCalculationStrategy {
 
     @Override
-    public void calculateScores(Match match) {
-        for (var performance : match) {
+    public void calculateScores(Game game) {
+        for (var performance : game) {
             var allPlayerRolls = performance.getAllRolls();
             var rollNum = 0;
             var previousFrameScore = 0;

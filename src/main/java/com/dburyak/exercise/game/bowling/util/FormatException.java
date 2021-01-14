@@ -1,4 +1,4 @@
-package com.dburyak.exercise.game.bowling.io;
+package com.dburyak.exercise.game.bowling.util;
 
 /**
  * Indicates that input has wrong format and can't be parsed.

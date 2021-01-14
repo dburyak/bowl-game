@@ -1,4 +1,4 @@
-package com.dburyak.exercise.game.bowling.io;
+package com.dburyak.exercise.game.bowling.service.io;
 
 import lombok.AllArgsConstructor;
 
@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 
 @AllArgsConstructor
-public class FileMatchHistoryInput implements MatchHistoryInput {
+public class FileGameHistoryInput implements GameHistoryInput {
     private File inputFile;
 
     @Override

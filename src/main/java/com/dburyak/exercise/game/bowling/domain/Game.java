@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Builder(toBuilder = true)
-public class Match implements Iterable<PlayerPerformance> {
+public class Game implements Iterable<PlayerPerformance> {
     private List<PlayerPerformance> players;
 
     @Override

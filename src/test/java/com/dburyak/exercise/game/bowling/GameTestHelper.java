@@ -1,7 +1,7 @@
 package com.dburyak.exercise.game.bowling;
 
 import com.dburyak.exercise.game.bowling.domain.Frame;
-import com.dburyak.exercise.game.bowling.domain.Match;
+import com.dburyak.exercise.game.bowling.domain.Game;
 import com.dburyak.exercise.game.bowling.domain.PlayerPerformance;
 import com.dburyak.exercise.game.bowling.domain.Roll;
 
@@ -11,17 +11,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class MatchTestHelper {
-    public Match buildMatchAllStrikes(String player1, String player2) {
-        return Match.builder()
+public class GameTestHelper {
+    public Game buildGameAllStrikes(String player1, String player2) {
+        return Game.builder()
                 .players(Stream.of(player1, player2)
                         .map(this::buildPerformanceAllStrikes)
                         .collect(Collectors.toList()))
                 .build();
     }
 
-    public Match buildMatchAllStrikesNotScored(String player1, String player2) {
-        return Match.builder()
+    public Game buildGameAllStrikesNotScoresCalculated(String player1, String player2) {
+        return Game.builder()
                 .players(Stream.of(player1, player2)
                         .map(this::buildPerformanceAllStrikesNotScored)
                         .collect(Collectors.toList())
@@ -31,7 +31,6 @@ public class MatchTestHelper {
 
     public PlayerPerformance buildPerformanceAllStrikes(String player) {
         var performance = PlayerPerformance.builder()
-                .totalScore(300)
                 .playerName(player)
                 .frames(new ArrayList<>())
                 .build();
@@ -55,7 +54,6 @@ public class MatchTestHelper {
 
     public PlayerPerformance buildPerformanceAllStrikesNotScored(String player) {
         var performance = PlayerPerformance.builder()
-                .totalScore(0)
                 .playerName(player)
                 .frames(new ArrayList<>())
                 .build();
@@ -77,8 +75,8 @@ public class MatchTestHelper {
         return performance;
     }
 
-    public Match buildMatchAllFouls(String player1, String player2) {
-        return Match.builder()
+    public Game buildGameAllFouls(String player1, String player2) {
+        return Game.builder()
                 .players(Stream.of(player1, player2)
                         .map(this::buildPerformanceAllFouls)
                         .collect(Collectors.toList()))
@@ -87,7 +85,6 @@ public class MatchTestHelper {
 
     public PlayerPerformance buildPerformanceAllFouls(String player) {
         var performance = PlayerPerformance.builder()
-                .totalScore(0)
                 .playerName(player)
                 .frames(new ArrayList<>())
                 .build();
@@ -102,10 +99,9 @@ public class MatchTestHelper {
         return performance;
     }
 
-    public Match buildMatchSample1(String player1, String player2) {
+    public Game buildGameJeffVsJohnScenario(String player1, String player2) {
         var performanceJeff = PlayerPerformance.builder()
                 .playerName(player1)
-                .totalScore(167)
                 .frames(List.of(
                         Frame.builder()
                                 .number(1)
@@ -171,7 +167,6 @@ public class MatchTestHelper {
                 .build();
         var performanceJohn = PlayerPerformance.builder()
                 .playerName(player2)
-                .totalScore(151)
                 .frames(List.of(
                         Frame.builder()
                                 .number(1)
@@ -235,12 +230,12 @@ public class MatchTestHelper {
                                 .build()
                 ))
                 .build();
-        return Match.builder()
+        return Game.builder()
                 .players(List.of(performanceJeff, performanceJohn))
                 .build();
     }
 
-    public Match buildMatchSample1NotScored(String player1, String player2) {
+    public Game buildNotScoredGameJeffVsJohnScenario(String player1, String player2) {
         var performanceJeff = PlayerPerformance.builder()
                 .playerName(player1)
                 .frames(List.of(
@@ -351,7 +346,7 @@ public class MatchTestHelper {
                                 .build()
                 ))
                 .build();
-        return Match.builder()
+        return Game.builder()
                 .players(List.of(performanceJeff, performanceJohn))
                 .build();
     }

@@ -1,25 +1,26 @@
-package com.dburyak.exercise.game.bowling.io;
+package com.dburyak.exercise.game.bowling.service.format;
 
 import com.dburyak.exercise.game.bowling.domain.Frame;
-import com.dburyak.exercise.game.bowling.domain.Match;
+import com.dburyak.exercise.game.bowling.domain.Game;
+import com.dburyak.exercise.game.bowling.service.io.GameOutput;
 
 import java.io.BufferedWriter;
 import java.io.PrintWriter;
 
-public class TenPinTabSeparatedFormatter implements ScoreFormatter {
+public class TenPinTabSeparatedGameOutputFormatter implements GameOutputFormatter {
     private static final String SYMB_STRIKE = "X";
     private static final String SYMB_SPARE = "/";
     private static final String SYMB_FOUL = "F";
 
     @Override
-    public void format(Match match, ScoreOutput output) {
-        try (var outWriter = new PrintWriter(new BufferedWriter(output.asOutputWriter()))) {
+    public void format(Game game, GameOutput output) {
+        try (var outWriter = new PrintWriter(new BufferedWriter(output.outputWriter()))) {
             outWriter.print("Frame");
             for (int i = 1; i <= 10; i++) {
                 outWriter.printf("\t\t%d", i);
             }
             outWriter.println();
-            for (var performance : match) {
+            for (var performance : game) {
                 outWriter.println(performance.getPlayerName());
                 outWriter.print("Pinfalls");
                 for (var frame : performance) {

@@ -14,7 +14,6 @@ public class Roll {
     public enum Type {
         HIT,
         MISS,
-        GUTTER,
         FOUL
     }
 
@@ -24,10 +23,6 @@ public class Roll {
 
     public boolean isMiss() {
         return type == Type.MISS;
-    }
-
-    public boolean isGutter() {
-        return type == Type.GUTTER;
     }
 
     public boolean isFoul() {

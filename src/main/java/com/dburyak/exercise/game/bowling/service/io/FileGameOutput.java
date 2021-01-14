@@ -1,4 +1,4 @@
-package com.dburyak.exercise.game.bowling.io;
+package com.dburyak.exercise.game.bowling.service.io;
 
 import lombok.AllArgsConstructor;
 
@@ -9,11 +9,11 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 
 @AllArgsConstructor
-public class FileScoreOutput implements ScoreOutput {
+public class FileGameOutput implements GameOutput {
     private File outputFile;
 
     @Override
-    public OutputStream asOutputStream() {
+    public OutputStream outputStream() {
         try {
             var parentDir = outputFile.getParentFile();
             if (parentDir != null) {

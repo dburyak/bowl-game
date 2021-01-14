@@ -11,6 +11,9 @@ import static com.dburyak.exercise.game.bowling.config.Config.OutputDestination.
 
 public class ConfigUtil {
 
+    /**
+     * Convert cli args value provided by user to application enum value.
+     */
     public InputSource determineInputSource(String input) {
         if (input == null || input.isBlank()) {
             return null;
@@ -23,6 +26,9 @@ public class ConfigUtil {
         }
     }
 
+    /**
+     * Convert cli args value provided by user to application enum value.
+     */
     public OutputDestination determineOutputDestination(String output) {
         if (output == null || output.isBlank()) {
             return null;

@@ -1,4 +1,4 @@
-package com.dburyak.exercise.game.bowling.io;
+package com.dburyak.exercise.game.bowling.service.io;
 
 import com.dburyak.exercise.game.bowling.config.Config;
 
@@ -7,19 +7,19 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-public interface ScoreOutput {
+public interface GameOutput {
 
-    OutputStream asOutputStream();
+    OutputStream outputStream();
 
-    default Writer asOutputWriter() {
-        return new OutputStreamWriter(asOutputStream());
+    default Writer outputWriter() {
+        return new OutputStreamWriter(outputStream());
     }
 
-    static ScoreOutput create(Config config) {
+    static GameOutput create(Config config) {
         if (config.getOutputDestination() == Config.OutputDestination.STDOUT) {
-            return new StdoutScoreOutput();
+            return new StdoutGameOutput();
         } else if (config.getOutputDestination() == Config.OutputDestination.FILE) {
-            return new FileScoreOutput(new File(config.getOutput()));
+            return new FileGameOutput(new File(config.getOutput()));
         } else {
             throw new IllegalArgumentException("output destination is not supported: " + config.getOutputDestination());
         }

@@ -1,6 +1,8 @@
-package com.dburyak.exercise.game.bowling.io;
+package com.dburyak.exercise.game.bowling.service;
 
-import com.dburyak.exercise.game.bowling.MatchTestHelper;
+import com.dburyak.exercise.game.bowling.GameTestHelper;
+import com.dburyak.exercise.game.bowling.service.format.TenPinTabSeparatedGameOutputFormatter;
+import com.dburyak.exercise.game.bowling.service.io.GameOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,24 +14,24 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TenPinTabSeparatedFormatterTest {
-    private TenPinTabSeparatedFormatter formatter = new TenPinTabSeparatedFormatter();
+    private TenPinTabSeparatedGameOutputFormatter formatter = new TenPinTabSeparatedGameOutputFormatter();
 
-    private MatchTestHelper matchHelper = new MatchTestHelper();
-    private ScoreOutput scoreOut = mock(ScoreOutput.class);
+    private GameTestHelper gameHelper = new GameTestHelper();
+    private GameOutput scoreOut = mock(GameOutput.class);
     private Writer scoreWriter = new StringWriter();
 
     @BeforeEach
     void setup() {
-        when(scoreOut.asOutputWriter()).thenReturn(scoreWriter);
+        when(scoreOut.outputWriter()).thenReturn(scoreWriter);
     }
 
     @Test
     void format_FormatsCorrectly_WhenAllStrikes() {
-        // given: match with all strikes
-        var match = matchHelper.buildMatchAllStrikes("p1", "p2");
+        // given: game with all strikes
+        var game = gameHelper.buildGameAllStrikes("p1", "p2");
 
-        // when: when format such match
-        formatter.format(match, scoreOut);
+        // when: when format such game
+        formatter.format(game, scoreOut);
 
         // then: formatted correctly
         var outStr = scoreWriter.toString();
@@ -47,11 +49,11 @@ public class TenPinTabSeparatedFormatterTest {
 
     @Test
     void format_FormatsCorrectly_WhenAllFouls() {
-        // given: match with all fouls
-        var match = matchHelper.buildMatchAllFouls("p1", "p2");
+        // given: game with all fouls
+        var game = gameHelper.buildGameAllFouls("p1", "p2");
 
-        // when: format match
-        formatter.format(match, scoreOut);
+        // when: format game
+        formatter.format(game, scoreOut);
 
         // then: formatted correctly
         var outStr = scoreWriter.toString();
@@ -68,12 +70,12 @@ public class TenPinTabSeparatedFormatterTest {
     }
 
     @Test
-    void format_FormatsCorrectly_WhenSampleMatch1() {
-        // given: sample1 match
-        var match = matchHelper.buildMatchSample1("Jeff", "John");
+    void format_FormatsCorrectly_WhenJeffVsJohnGame() {
+        // given: JeffVsJohn scenario game
+        var game = gameHelper.buildGameJeffVsJohnScenario("Jeff", "John");
 
-        // when: format match
-        formatter.format(match, scoreOut);
+        // when: format game
+        formatter.format(game, scoreOut);
 
         // then: formatted correctly
         var outStr = scoreWriter.toString();
