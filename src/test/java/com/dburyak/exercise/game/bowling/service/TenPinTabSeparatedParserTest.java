@@ -7,8 +7,11 @@ import com.dburyak.exercise.game.bowling.service.io.GameHistoryInput;
 import com.dburyak.exercise.game.bowling.util.FormatException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.StringReader;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -101,5 +104,41 @@ class TenPinTabSeparatedParserTest {
                 // then: format exception is thrown
                 .isInstanceOf(FormatException.class)
                 .hasMessageContaining("too many rolls");
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-1, -100, 11, 100, Integer.MIN_VALUE, Integer.MAX_VALUE})
+    void parse_Fails_WhenInputContainsOutOfRangePinfalls(int invalidPinfalls) {
+        // given: game input with negative knocked pins
+        var inputStr = "Carl " + invalidPinfalls;
+        var reader = new StringReader(inputStr);
+        when(gameInput.asInputReader()).thenReturn(reader);
+
+        // when: parse it
+        Assertions.assertThatThrownBy(() -> parser.parse(gameInput))
+
+                // then: format exception is thrown
+                .isInstanceOf(FormatException.class)
+                .hasMessageContaining("number of rolls is out of range")
+                .hasMessageContaining("Carl")
+                .hasMessageContaining(Objects.toString(invalidPinfalls));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"A", "zZz", "Carl"})
+    void parse_Fails_WhenInputContainsIllegalSymbolsForRollResult(String illegalSymbols) {
+        // given: game input with illegal symbol (not "F") on knocked pins place
+        var inputStr = "Carl " + illegalSymbols;
+        var reader = new StringReader(inputStr);
+        when(gameInput.asInputReader()).thenReturn(reader);
+
+        // when: parse it
+        Assertions.assertThatThrownBy(() -> parser.parse(gameInput))
+
+                // then: format exception is thrown
+                .isInstanceOf(FormatException.class)
+                .hasMessageContaining("malformed number of rolls")
+                .hasMessageContaining("Carl")
+                .hasMessageContaining(illegalSymbols);
     }
 }
