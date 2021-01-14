@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * Default input format - tab separated text, ten pin rules.
  */
 public class TenPinTabSeparatedParser implements MatchHistoryParser {
-    private static final String SEPARATOR = "\t";
+    private static final String SEPARATOR = "\\s+";
 
     @Override
     public Match parse(MatchHistoryInput input) {

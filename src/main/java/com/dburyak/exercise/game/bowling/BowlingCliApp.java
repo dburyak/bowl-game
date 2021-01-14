@@ -4,6 +4,11 @@ import com.dburyak.exercise.game.bowling.config.CliArgsConfigRetriever;
 import com.dburyak.exercise.game.bowling.config.Config;
 import com.dburyak.exercise.game.bowling.config.ConfigRetriever;
 import com.dburyak.exercise.game.bowling.config.DefaultConfigRetriever;
+import com.dburyak.exercise.game.bowling.io.MatchHistoryInput;
+import com.dburyak.exercise.game.bowling.io.MatchHistoryParser;
+import com.dburyak.exercise.game.bowling.io.ScoreFormatter;
+import com.dburyak.exercise.game.bowling.io.ScoreOutput;
+import com.dburyak.exercise.game.bowling.logic.ScoreCalculator;
 import com.dburyak.exercise.game.bowling.util.ConfigUtil;
 import lombok.Getter;
 import picocli.CommandLine;
@@ -54,8 +59,12 @@ public class BowlingCliApp implements Callable<Integer> {
 
     public enum Rules {tenPin}
 
+    /**
+     * Main application logic.
+     */
     @Override
     public Integer call() throws Exception {
+        // configuration
         var configUtil = new ConfigUtil();
         var configRetrievers = List.of(
                 new DefaultConfigRetriever(),
@@ -64,7 +73,17 @@ public class BowlingCliApp implements Callable<Integer> {
         var config = Config.merge(configRetrievers.stream()
                 .map(ConfigRetriever::retrieve)
                 .collect(Collectors.toList()));
-        // TODO: implement logic here
+
+        // initialization
+        var input = MatchHistoryInput.create(config);
+        var parser = MatchHistoryParser.create(config);
+        var scoreCalculator = ScoreCalculator.create(config);
+        var outputFormatter = ScoreFormatter.create(config);
+        var output = ScoreOutput.create(config);
+
+        var match = parser.parse(input);
+        scoreCalculator.calculateScores(match);
+        outputFormatter.format(match, output);
         return 0;
     }
 
