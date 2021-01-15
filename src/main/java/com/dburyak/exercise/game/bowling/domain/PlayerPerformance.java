@@ -32,4 +32,12 @@ public class PlayerPerformance implements Iterable<Frame> {
         frames.add(frame);
         return this;
     }
+
+    public Frame getFirstFrame() {
+        return frames.get(0);
+    }
+
+    public Frame getLastFrame() {
+        return frames.get(frames.size() - 1);
+    }
 }

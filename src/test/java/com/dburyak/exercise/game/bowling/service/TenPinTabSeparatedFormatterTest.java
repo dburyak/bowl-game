@@ -1,6 +1,8 @@
 package com.dburyak.exercise.game.bowling.service;
 
 import com.dburyak.exercise.game.bowling.GameTestHelper;
+import com.dburyak.exercise.game.bowling.domain.Frame;
+import com.dburyak.exercise.game.bowling.domain.Roll;
 import com.dburyak.exercise.game.bowling.service.format.TenPinTabSeparatedGameOutputFormatter;
 import com.dburyak.exercise.game.bowling.service.io.GameOutput;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -89,5 +92,40 @@ public class TenPinTabSeparatedFormatterTest {
                 "Score\t\t16\t\t25\t\t44\t\t53\t\t82\t\t101\t\t110\t\t124\t\t132\t\t151\n";
         assertThat(outStr)
                 .isEqualTo(expectedStr);
+    }
+
+    @Test
+    void format_FormatsCorrectly_WhenGameWithStrikeAfterFoulInSingleFrame() {
+        // given: edge case - player rolls foul on first attempt, but manages to roll strike on the second one
+        var game = gameHelper.buildGameAllFouls("p1", "p2");
+        var firstFrame = game.getPlayerPerformance("p1").getFirstFrame();
+        firstFrame.setRolls(List.of(Roll.foul(), Roll.strike()));
+        firstFrame.setType(Frame.Type.STRIKE);
+
+        // when: format such game
+        formatter.format(game, scoreOut);
+
+        // then: frame is formatter correctly - should be "F X"
+        var outStr = scoreWriter.toString();
+        assertThat(outStr)
+                .contains("F\tX");
+
+    }
+
+    @Test
+    void format_FormatsCorrectly_WhenLastFrameSpareFrame() {
+        // given: edge case - last frame with spare
+        var game = gameHelper.buildGameAllFouls("p1", "p2");
+        var lastFrame = game.getPlayerPerformance("p1").getLastFrame();
+        lastFrame.setRolls(List.of(Roll.hit(7), Roll.hit(3), Roll.hit(9)));
+        lastFrame.setType(Frame.Type.SPARE);
+
+        // when: format such game
+        formatter.format(game, scoreOut);
+
+        // then: frame is formatter correctly - should be spare followed by the last roll result "7 / 9"
+        var outStr = scoreWriter.toString();
+        assertThat(outStr)
+                .contains("7\t/\t9");
     }
 }

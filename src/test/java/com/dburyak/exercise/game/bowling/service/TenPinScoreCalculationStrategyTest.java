@@ -2,6 +2,7 @@ package com.dburyak.exercise.game.bowling.service;
 
 import com.dburyak.exercise.game.bowling.GameTestHelper;
 import com.dburyak.exercise.game.bowling.domain.Frame;
+import com.dburyak.exercise.game.bowling.domain.Roll;
 import com.dburyak.exercise.game.bowling.service.rules.TenPinScoreCalculationStrategy;
 import org.junit.jupiter.api.Test;
 
@@ -98,5 +99,31 @@ class TenPinScoreCalculationStrategyTest {
                 .containsExactlyElementsOf(jeffExpectedScores);
         assertThat(johnScores)
                 .containsExactlyElementsOf(johnExpectedScores);
+    }
+
+    @Test
+    void calculateScore_CalculatesCorrectly_WhenFrameWithStrikeAfterFoul() {
+        // given: edge case - game with frame where on first attempt player makes foul, but has strike on the second one
+        var game = gameHelper.buildGameAllStrikesNotScoresCalculated("p1", "p2");
+        var firstFrame = game.getPlayerPerformance("p1").getFirstFrame();
+        firstFrame.setRolls(List.of(Roll.foul(), Roll.strike()));
+        firstFrame.setType(Frame.Type.STRIKE);
+
+        // when: calculate scores for the game
+        scoreCalculator.calculateScores(game);
+
+        // then: score contains same values as for "all strikes game"
+        var player1Scores = game.getPlayers().get(0).getFrames().stream()
+                .map(Frame::getScore)
+                .collect(Collectors.toList());
+        var player2Scores = game.getPlayers().get(1).getFrames().stream()
+                .map(Frame::getScore)
+                .collect(Collectors.toList());
+        var expectedAllStrikesScores = List.of(30, 60, 90, 120, 150, 180, 210, 240, 270, 300);
+
+        assertThat(player1Scores)
+                .containsExactlyElementsOf(expectedAllStrikesScores);
+        assertThat(player2Scores)
+                .containsExactlyElementsOf(expectedAllStrikesScores);
     }
 }

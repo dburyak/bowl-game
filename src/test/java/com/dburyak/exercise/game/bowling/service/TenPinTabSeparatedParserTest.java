@@ -141,4 +141,20 @@ class TenPinTabSeparatedParserTest {
                 .hasMessageContaining("Carl")
                 .hasMessageContaining(illegalSymbols);
     }
+
+    @Test
+    void parse_Fails_WhenMissingRollResultValueInInput() {
+        // given: game input with playerName row only, no roll result
+        var inputStr = "Carl   ";
+        var reader = new StringReader(inputStr);
+        when(gameInput.asInputReader()).thenReturn(reader);
+
+        // when: parse it
+        Assertions.assertThatThrownBy(() -> parser.parse(gameInput))
+
+                // then: format exception is thrown
+                .isInstanceOf(FormatException.class)
+                .hasMessageContaining("malformed input entry")
+                .hasMessageContaining("Carl");
+    }
 }
