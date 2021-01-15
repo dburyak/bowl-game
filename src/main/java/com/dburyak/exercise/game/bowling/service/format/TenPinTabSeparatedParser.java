@@ -33,10 +33,9 @@ public class TenPinTabSeparatedParser implements GameParser {
                     .filter(str -> !str.isBlank())
                     .map(line -> {
                         var items = line.split(SEPARATOR);
-                        if (items.length != 2) {
+                        if (items.length != 2 || !InputEntry.isValid(items[0], items[1])) {
                             throw new FormatException("malformed input entry: " + line);
                         }
-                        // TODO: validate input entry here, not in .toRoll(e) (check in [0..10] && in ["f"])
                         return new InputEntry(items[0], items[1]);
                     })
                     // grouping using linked hash map because we need to preserve order
@@ -69,24 +68,34 @@ public class TenPinTabSeparatedParser implements GameParser {
     private static class InputEntry {
         private String playerName;
         private String rollResult;
+
+        static boolean isValid(String playerName, String rollResult) {
+            var isPlayerNameValid = playerName != null && !playerName.isBlank();
+            var isRollResultValid = rollResult != null && !rollResult.isBlank();
+            if (!isPlayerNameValid || !isRollResultValid) {
+                return false;
+            }
+            if (rollResult.equalsIgnoreCase("F")) {
+                return true;
+            } else {
+                try {
+                    var intRollResult = Integer.parseInt(rollResult);
+                    return 0 <= intRollResult && intRollResult <= 10;
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+            }
+        }
     }
 
-    public Roll toRoll(InputEntry e) {
+    private Roll toRoll(InputEntry e) {
         var knockedPins = 0;
         var type = Roll.Type.HIT;
         if (e.rollResult.equalsIgnoreCase("f")) {
             type = Roll.Type.FOUL;
         } else {
-            try {
-                knockedPins = Integer.parseInt(e.rollResult);
-                var isValidNumPins = (0 <= knockedPins) && (knockedPins <= 10);
-                if (!isValidNumPins) {
-                    throw new FormatException("number of rolls is out of range: " + e);
-                }
-                type = knockedPins > 0 ? Roll.Type.HIT : Roll.Type.MISS;
-            } catch (NumberFormatException err) {
-                throw new FormatException("malformed number of rolls in input entry: " + e, err);
-            }
+            knockedPins = Integer.parseInt(e.rollResult);
+            type = knockedPins > 0 ? Roll.Type.HIT : Roll.Type.MISS;
         }
         return Roll.builder()
                 .type(type)
@@ -94,7 +103,7 @@ public class TenPinTabSeparatedParser implements GameParser {
                 .build();
     }
 
-    public List<Frame> toFrames(List<Roll> allPlayerRolls) {
+    private List<Frame> toFrames(List<Roll> allPlayerRolls) {
         var frames = new ArrayList<Frame>();
         var rollPos = 0;
         var frameNumber = 1;

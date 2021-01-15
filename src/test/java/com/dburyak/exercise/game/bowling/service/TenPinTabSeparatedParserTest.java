@@ -119,7 +119,7 @@ class TenPinTabSeparatedParserTest {
 
                 // then: format exception is thrown
                 .isInstanceOf(FormatException.class)
-                .hasMessageContaining("number of rolls is out of range")
+                .hasMessageContaining("malformed input entry")
                 .hasMessageContaining("Carl")
                 .hasMessageContaining(Objects.toString(invalidPinfalls));
     }
@@ -137,7 +137,7 @@ class TenPinTabSeparatedParserTest {
 
                 // then: format exception is thrown
                 .isInstanceOf(FormatException.class)
-                .hasMessageContaining("malformed number of rolls")
+                .hasMessageContaining("malformed input entry")
                 .hasMessageContaining("Carl")
                 .hasMessageContaining(illegalSymbols);
     }
